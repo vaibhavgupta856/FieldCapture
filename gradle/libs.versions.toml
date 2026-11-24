@@ -9,7 +9,7 @@ work = "2.10.0"
 coroutines = "1.10.2"
 mlkitText = "16.0.1"
 testRules = "1.7.0"
-testJunit = "1.2.2"
+testJunit = "1.3.0"
 testRunner = "1.7.0"
 
 [libraries]

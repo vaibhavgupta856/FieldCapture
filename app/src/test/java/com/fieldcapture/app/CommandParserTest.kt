@@ -50,7 +50,7 @@ class LineItemCatalogTest {
         room: String? = null,
         surface: String? = null,
         kind: String? = null,
-        note: String? = null,
+        noteText: String? = null,
     ): CaptureRecord {
         val q = QualityMetrics(200.0, 90.0, 0.0, 0.0, 0.2, 0.1, true, emptyList())
         return CaptureRecord(id, "job1", type, "", 0L, "", q).apply {
@@ -64,7 +64,7 @@ class LineItemCatalogTest {
                 )
             }
             if (type == CaptureType.NOTE) {
-                note = com.fieldcapture.app.core.NoteFields(com.fieldcapture.app.core.Field(note, 1f, "VOICE"))
+                note = com.fieldcapture.app.core.NoteFields(com.fieldcapture.app.core.Field(noteText, 1f, "VOICE"))
             }
             status = CaptureStatus.UPLOADED
         }
@@ -83,7 +83,7 @@ class LineItemCatalogTest {
     @Test
     fun `subfloor note maps to subfloor item with uncertain quantity`() {
         val items = LineItemCatalog.build(
-            listOf(capture(CaptureType.NOTE, note = "subfloor soft by the cabinet")),
+            listOf(capture(CaptureType.NOTE, noteText = "subfloor soft by the cabinet")),
         )
         val subfloor = items.first { it.code == "SUBFLOOR_RR_SF" }
         assertEquals(null, subfloor.quantity)

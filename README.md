@@ -35,6 +35,9 @@ from the phone camera, so no hardware is required.
 CLI build: `./gradlew assembleDebug`, `./gradlew test`, `./gradlew installDebug`,
 `./gradlew connectedAndroidTest` (on a device).
 
+Verified here with JDK 17.0.21 and Android SDK 36: `assembleDebug`, `test` (7 passing)
+and `compileDebugAndroidTestKotlin` all succeed. `connectedAndroidTest` needs a device.
+
 Video-file feeds must be **h.265/HEVC** on Android:
 
 ```bash

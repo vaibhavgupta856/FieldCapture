@@ -34,17 +34,30 @@ object CommandParser {
         }
         if (lower.contains("capture damage") || lower.startsWith("damage ")) {
             val rest = lower.substringAfter("damage", "").trim(' ', ',', '.')
-            val parts = rest.split(Regex("\\s*,\\s*|\\s+in\\s+|\\s+on\\s+"))
+            val delimited = rest.split(Regex("\\s*,\\s*|\\s+in\\s+|\\s+on\\s+"))
                 .map { it.trim(' ', ',', '.') }
                 .filter { it.isNotEmpty() }
+            // No comma / "in" / "on": fall back to whitespace-separated words.
+            val parts = if (delimited.size >= 2) delimited
+            else rest.split(Regex("\\s+")).filter { it.isNotEmpty() }
 
-            val room = parts.firstOrNull { p -> rooms.any { p == it || p.contains(it) } }
-            val surface = parts.firstOrNull { p ->
-                surfaces.any { p == it || p.contains(it) } && p != room
+            val roomIndex = parts.indexOfFirst { p -> rooms.any { p == it || p.contains(it) } }
+            val surfaceIndex = parts.indexOfFirst { p ->
+                p != parts.getOrNull(roomIndex) && surfaces.any { p == it || p.contains(it) }
             }
-            // Fallback: two trailing noun phrases with no comma -> first is room, last is surface.
-            val finalRoom = room ?: parts.getOrNull(0)?.takeIf { parts.size >= 2 }
-            val finalSurface = surface ?: parts.getOrNull(parts.size - 1)?.takeIf { parts.size >= 2 }
+            val directions = setOf("north", "south", "east", "west", "upper", "lower", "behind", "under")
+            val finalRoom = parts.getOrNull(roomIndex)
+            val finalSurface = when {
+                surfaceIndex !in parts.indices -> null
+                roomIndex >= 0 && surfaceIndex > roomIndex -> {
+                    val start = if (surfaceIndex > 0 && parts[surfaceIndex - 1] in directions) surfaceIndex - 1 else surfaceIndex
+                    parts.drop(start).joinToString(" ")
+                }
+                roomIndex >= 0 && surfaceIndex < roomIndex -> {
+                    parts.take(roomIndex).joinToString(" ").ifBlank { parts[surfaceIndex] }
+                }
+                else -> parts[surfaceIndex]
+            }
             return Command.Damage(finalRoom, finalSurface, raw)
         }
         return Command.Unknown(raw, "unrecognised command")

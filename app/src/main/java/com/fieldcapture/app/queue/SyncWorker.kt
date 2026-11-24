@@ -5,8 +5,8 @@ import android.graphics.BitmapFactory
 import androidx.work.Constraints
 import androidx.work.ExistingWorkPolicy
 import androidx.work.NetworkType
+import androidx.work.ListenableWorker
 import androidx.work.OneTimeWorkRequestBuilder
-import androidx.work.Result
 import androidx.work.WorkManager
 import androidx.work.WorkerParameters
 import androidx.work.CoroutineWorker
@@ -20,11 +20,11 @@ import com.fieldcapture.app.extraction.HybridExtractor
 
 /** Extracts queued captures and writes the job record. Retries are idempotent by capture id. */
 class SyncWorker(appContext: Context, params: WorkerParameters) : CoroutineWorker(appContext, params) {
-    override suspend fun doWork(): Result {
+    override suspend fun doWork(): ListenableWorker.Result {
         val queue = CaptureQueue(applicationContext)
-        if (queue.isOfflineSimulated()) return Result.retry()
+        if (queue.isOfflineSimulated()) return ListenableWorker.Result.retry()
 
-        val jobId = queue.activeJobId ?: return Result.success()
+        val jobId = queue.activeJobId ?: return ListenableWorker.Result.success()
         val gemini = if (BuildConfig.GEMINI_API_KEY.isBlank()) null
         else GeminiClient(BuildConfig.GEMINI_API_KEY, BuildConfig.GEMINI_MODEL)
         val extractor = HybridExtractor(applicationContext, gemini)
@@ -65,7 +65,8 @@ class SyncWorker(appContext: Context, params: WorkerParameters) : CoroutineWorke
                 ),
             )
             JobJson.write(queue.jobDir, job)
-            return if (queue.countPending() == 0) Result.success() else Result.retry()
+            return if (queue.countPending() == 0) ListenableWorker.Result.success()
+            else ListenableWorker.Result.retry()
         } finally {
             extractor.close()
         }
