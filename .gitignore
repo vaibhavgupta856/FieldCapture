@@ -1,0 +1,17 @@
+*.iml
+.gradle/
+local.properties
+.idea/
+.DS_Store
+build/
+captures/
+.externalNativeBuild/
+.cxx/
+*.apk
+*.aab
+*.jks
+.receipts/
+frames/
+tools/eval/ground_truth.csv
+tools/eval/predictions.csv
+tools/eval/quality_labels.csv

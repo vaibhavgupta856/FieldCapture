@@ -1,0 +1,16 @@
+[
+  {"code": "DRYWALL_RR_SF", "description": "Remove and replace gypsum wallboard", "unit": "SQ_FT"},
+  {"code": "INSULATION_RR_SF", "description": "Remove and replace batt insulation", "unit": "SQ_FT"},
+  {"code": "SUBFLOOR_RR_SF", "description": "Remove and replace subfloor sheathing", "unit": "SQ_FT"},
+  {"code": "FLOORING_RR_SF", "description": "Remove and replace finish flooring", "unit": "SQ_FT"},
+  {"code": "STUD_SISTER_LF", "description": "Sister or replace framing members", "unit": "LIN_FT"},
+  {"code": "WATER_HEATER_DIAG_EA", "description": "Diagnose water heater and leaks", "unit": "EACH"},
+  {"code": "WATER_HEATER_REPL_EA", "description": "Replace water heater", "unit": "EACH"},
+  {"code": "PLUMB_SUPPLY_REPAIR_LF", "description": "Repair supply line", "unit": "LIN_FT"},
+  {"code": "CABINET_BASE_RR_EA", "description": "Remove and replace base cabinet", "unit": "EACH"},
+  {"code": "PAINT_WALL_SF", "description": "Prime and paint affected surface", "unit": "SQ_FT"},
+  {"code": "MOLD_REMEDIATE_SF", "description": "Antimicrobial treatment of affected surface", "unit": "SQ_FT"},
+  {"code": "DEHUMIDIFY_DAY", "description": "Dehumidifier rental", "unit": "DAY"},
+  {"code": "CLEANUP_HR", "description": "Cleanup, debris removal and disposal labor", "unit": "HOUR"},
+  {"code": "ACCESS_PANEL_EA", "description": "Install access panel", "unit": "EACH"}
+]

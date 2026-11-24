@@ -1,0 +1,107 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.local/fieldcapture/job_record.schema.json",
+  "title": "FieldCapture job record",
+  "type": "object",
+  "required": ["schema_version", "job_id", "started_at_ms", "captures", "draft_line_items"],
+  "properties": {
+    "schema_version": { "const": "1.0" },
+    "job_id": { "type": "string" },
+    "started_at_ms": { "type": "integer" },
+    "ended_at_ms": { "type": ["integer", "null"] },
+    "device_mode": { "enum": ["MOCK_DEVICE_KIT", "GLASSES"] },
+    "transcript": { "type": "array", "items": { "type": "string" } },
+    "diagnostics": { "type": "object", "additionalProperties": { "type": "string" } },
+    "captures": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "type", "quality", "command_text", "image_path"],
+        "properties": {
+          "id": { "type": "string" },
+          "type": { "enum": ["NAMEPLATE", "DAMAGE", "NOTE"] },
+          "command_text": { "type": "string" },
+          "created_at_ms": { "type": "integer" },
+          "image_path": { "type": "string" },
+          "status": { "enum": ["QUEUED", "EXTRACTED", "UPLOADED", "FAILED"] },
+          "attempts": { "type": "integer" },
+          "last_error": { "type": ["string", "null"] },
+          "quality": {
+            "type": "object",
+            "required": ["laplacian_variance", "mean_luma", "passed"],
+            "properties": {
+              "laplacian_variance": { "type": "number" },
+              "mean_luma": { "type": "number" },
+              "dark_fraction": { "type": "number" },
+              "clipped_fraction": { "type": "number" },
+              "detail_fraction": { "type": "number" },
+              "text_coverage": { "type": "number" },
+              "passed": { "type": "boolean" },
+              "reasons": { "type": "array", "items": { "type": "string" } }
+            }
+          },
+          "nameplate": { "$ref": "#/$defs/nameplate" },
+          "damage": { "$ref": "#/$defs/damage" },
+          "note": { "$ref": "#/$defs/note" }
+        }
+      }
+    },
+    "draft_line_items": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["code", "description", "unit", "basis", "confidence", "capture_ids", "status"],
+        "properties": {
+          "code": { "type": "string" },
+          "description": { "type": "string" },
+          "unit": { "enum": ["SQ_FT", "LIN_FT", "EACH", "DAY", "HOUR"] },
+          "quantity": { "type": ["number", "null"] },
+          "basis": { "type": "string" },
+          "confidence": { "type": "number", "minimum": 0, "maximum": 1 },
+          "capture_ids": { "type": "array", "items": { "type": "string" } },
+          "status": { "const": "DRAFT" }
+        }
+      }
+    }
+  },
+  "$defs": {
+    "confidenceField": {
+      "type": "object",
+      "required": ["value", "confidence", "source"],
+      "properties": {
+        "value": {},
+        "confidence": { "type": "number", "minimum": 0, "maximum": 1 },
+        "source": { "enum": ["OCR", "VLM", "RULE", "VOICE", "USER", "UNKNOWN"] },
+        "evidence": { "type": "string" }
+      }
+    },
+    "nameplate": {
+      "type": "object",
+      "properties": {
+        "make": { "$ref": "#/$defs/confidenceField" },
+        "model": { "$ref": "#/$defs/confidenceField" },
+        "serial_number": { "$ref": "#/$defs/confidenceField" },
+        "manufacture_date": { "$ref": "#/$defs/confidenceField" }
+      }
+    },
+    "damage": {
+      "type": "object",
+      "properties": {
+        "room": { "$ref": "#/$defs/confidenceField" },
+        "surface": { "$ref": "#/$defs/confidenceField" },
+        "damage_type": { "$ref": "#/$defs/confidenceField" },
+        "approximate_size": { "$ref": "#/$defs/confidenceField" },
+        "size_sq_ft_estimate": { "oneOf": [{ "$ref": "#/$defs/confidenceField" }, { "type": "null" }] }
+      }
+    },
+    "note": {
+      "type": "object",
+      "properties": {
+        "text": { "$ref": "#/$defs/confidenceField" },
+        "location": { "oneOf": [{ "$ref": "#/$defs/confidenceField" }, { "type": "null" }] },
+        "subject": { "oneOf": [{ "$ref": "#/$defs/confidenceField" }, { "type": "null" }] },
+        "severity": { "oneOf": [{ "$ref": "#/$defs/confidenceField" }, { "type": "null" }] }
+      }
+    }
+  }
+}

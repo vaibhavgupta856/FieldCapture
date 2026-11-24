@@ -1,0 +1,9 @@
+# Copy to local.properties and fill in. Not committed.
+# For Mock Device Kit development both values may be left as 0.
+mwdat_application_id=0
+mwdat_client_token=0
+
+# Optional: Gemini API key. Without it the app still captures, gates quality,
+# queues and runs on-device nameplate OCR, but damage/note extraction is skipped.
+gemini_api_key=
+gemini_model=gemini-2.0-flash
